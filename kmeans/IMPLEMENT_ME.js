@@ -36,12 +36,52 @@ var points = [];
 
 /* For each point, assign it to the cluster represented by the closest centroid */
 function assignCentroids() {
-  
+  var i, j;
+  var lenp = points.length;
+  var lenc = centroids.length;
+  for(i = 0; i < lenp; ++i) {
+    var mindis = -1;
+    var ind = 0;
+    for (j = 0; j < lenc; ++j) {
+      var dis = (points[i].x - centroids[j].x)*(points[i].x - centroids[j].x)+(points[i].y - centroids[j].y)*(points[i].y - centroids[j].y);
+      if (mindis < 0 || mindis > dis) {
+        ind = j;
+        mindis = dis;
+      }
+    }
+    points[i].centroid = centroids[ind];
+  }
 }
 
 /* Update the position of each centroid based on the points assigned to it. 
   The new position should be the mean of the positions of the points assigned to it.
 */
 function updateCentroids() {
-  
+  var i, j;
+  var lenp = points.length;
+  var lenc = centroids.length;
+  for (i = 0; i < lenc; ++i) {
+    var minX = -1;
+    var minY = -1;
+    var maxX = -1;
+    var maxY = -1;
+    for (j = 0; j < lenp; ++j) {
+      if (points[j].centroid.id == centroids[i].id) {
+        if (minX < 0 || minX > points[j].x) {
+          minX = points[j].x;
+        }
+        if (maxX < 0 || maxX < points[j].x) {
+          maxX = points[j].x;
+        }
+        if (minY < 0 || minY > points[j].y) {
+          minY = points[j].y;
+        }
+        if (maxY < 0 || maxY < points[j].y) {
+          maxY = points[j].y;
+        }
+      }
+    }
+    centroids[i].x = (minX + maxX)/2.0;
+    centroids[i].y = (minY + maxY)/2.0;
+  }
 }
